@@ -1,4 +1,11 @@
 /**
+ * qlog.js
+ * version : 0.1
+ * author  : John LaDuke
+ * license : MIT
+ */
+
+/**
  * jQuery 'exists' function.
  */
 jQuery.fn.exists = function() {
@@ -10,7 +17,7 @@ jQuery.fn.exists = function() {
  */
 _.mixin({ 
 			capitalize: function(string) { 
-				return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase(); 
+				return string.replace(/\b\S+\b/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();}); 
 			},
 			isError: function(object) {
 				return object instanceof Error;
@@ -19,289 +26,172 @@ _.mixin({
 
 /**
  * Quick logging to screen.
- * @param {String} message the message to write.
+ * @param {String} input the message to write.
+ * @param {String} title the optional heading.
  * @param {Object} options the optional options,
  * 	see “Default options” below.
- *
- * See “Span styles” to tweak ‘xray’ colors.
  */
-function qlog(message, options) {
-	// Default options.
-	var opt = {
-		title: '',	//add title
-		xray:   true,	//false to use value
-		sort:   false,	//true to sort arrays
-		sortBy: null,	//set to sort objects by ‘arg’
-		colFun: false,	//colorize functions (BETA)
-		test:   false 	//export some private functions for unit testing
+function qlog(input, title, options) {
+	
+	// default options
+	var option = {
+		isFormatted: true, 	//TRUE to "unwrap" objects etc
+		isSorted: false 	//TRUE to sort arrays using array[0] to select sorting type
 	};
-	_.extend(opt, options);
-
-	// Constants.
-	var CR = '<br>';
-	var TAB = '&nbsp;&nbsp;&nbsp;';
-	var STRING    = {OPEN_CHAR: '“', CLOSE_CHAR: '”', valueOf: function() {return 'string';}};
-	var ARRAY     = {OPEN_CHAR: '[', CLOSE_CHAR: ']', valueOf: function() {return 'array';}};
-	var OBJECT    = {OPEN_CHAR: '{', CLOSE_CHAR: '}', valueOf: function() {return 'object';}};
-	var ERROR     = {valueOf: function() {return 'error';}};
-	var FUNCTION  = {valueOf: function() {return 'function';}};
-	var NUMBER    = {valueOf: function() {return 'number';}};
-	var NULL      = {valueOf: function() {return 'null';}};
-	var UNDEFINED = {valueOf: function() {return 'undefined';}};
-
-	// Run init if first time use.
-	if (!$('#screenlogArea').exists()) {
-		init();
-	}
-
-	// Write log.
-	var time = moment().format('hh:mm:ss.SSS');
-	var caller = arguments.callee.caller;
-	caller = (!caller) ? '' : caller.name + '(): ';
-	if (opt.xray) {
-		message = xray(message);
-	}
-	title = _.isEmpty(opt.title) || _.isNull(opt.title) ? '' : addSpan(_.capitalize(opt.title), 'title') + CR  + addIndent(5);
-
-	$('<p>')
-		.html('[' + time + '] ' + caller + title + message)
-		.appendTo('#screenlogArea');
-
-	/**
-	 * Creates html divs to write logs to.
-	 */
-	function init() {
-		$("<style>")
-			.prop("type", "text/css")
-			//Span styles:
-			.html("\
-				.qlog-array {color: darkgreen;}\
-				.qlog-object {color: darkblue;}\
-				.qlog-string {color: black;}\
-				.qlog-number {color: black;}\
-    			.qlog-true {color: green;}\
-				.qlog-false {color: red;}\
-				.qlog-error {color: red;}\
-				.qlog-function {color: blue;}\
-				.qlog-null {color: darkred;}\
-				.qlog-undefined {color: darkred;}\
-				.qlog-title {font-weight: bold; font-size: 1.1em; font-family: 'san serif';}\
-				.qlog-btn {background-color: #ededef; border: thin #ddd solid; border-radius: 5px;}\
-    			}")
-			.appendTo("head");
-
-		var fullSize = $('body').width() * 0.8;
+	_.extend(option, options);
+	
+	// init if first time use.
+	if (!$('#qlog').exists()) {
+		var fullSize = $(window).width() * 0.8;
 		var compactSize = fullSize * 0.3;
 		var compactLog = false;
-		$('<div>')
-			.prop('id', 'screenlogContainer')
-			.css({   
-					 'font-family': ['Lucida Console', 'Courier', 'Courier New', 'monospace'],
-					 background:'#efefef',
-					 border:'1px solid silver',
-					 padding:'5px',
-					 top:'0px',
-					 position:'absolute',
-					 right:'0px',
-					 width:fullSize
-				 })
+		$("<div>")
+			.prop("id", "qlogContainer")
 			.click(function() { 
-					   $("#screenlogArea").slideToggle("slow"); 
-					   $('#screenlogHdr').html('<span class="qlog-btn">' + (compactLog ?'[&minus;]': '[&plus;]') + '</span> qlog:');
+					   $("#qlog").slideToggle("slow"); 
+					   $("#qlogHdr").html("<span class=\"button\">" + (compactLog ?"[&minus;]": "[&plus;]") + "</span> qlog:");
 					   $(this).animate({width:compactLog ?fullSize: compactSize}, "slow");
 					   compactLog = !compactLog;
 				   })
-			.appendTo('body');
+			.appendTo("body");
 
 		$('<h2>')
-			.prop('id', 'screenlogHdr')
-			.html('<span class="qlog-btn">[&minus;]</span> qlog:')
-			.appendTo('#screenlogContainer');
+			.prop("id", "qlogHdr")
+			.html("<span class=\"button\">[&minus;]</span> qlog:")
+			.appendTo("#qlogContainer");
 
-		$('<div>')
-			.prop('id', 'screenlogArea')
-			.css({
-					 background:'#dedede',
-					 border:'1px solid silver',
-					 borderRadius:'5px',
-					 padding:'5px'})
-			.appendTo('#screenlogContainer');
+		$("<div>")
+			.prop("id", "qlog")
+			.appendTo("#qlogContainer");
 	}
 
-
-	/**
-	 * Encode text for html consumption.
-	 */
-	function encode(text, level) {
-		return text
-			.replace(/\</g, '&lt;')
-			.replace(/\n/g, CR + addIndent(level));
-	} //end encode()
-
-	/**
-	 * Adds spacing to indent text.
-	 */
-	function addIndent(indentLevel) {
-	    var indentBuffer = '';
-	    _.times(indentLevel, function(n) {indentBuffer += TAB;});
-		return indentBuffer;
-	} //end indent()
-
-	/**
-	 * Adds tag span and class to text.
-	 */
-	function addSpan(text, classid) {
-		if (_.isUndefined(classid)) {
-			classid = text;
-		}
-		return '<span class="qlog-' + classid + '">' + text + '</span>';
-	}
-
-    function xray(sourceObject, indentWidth) {
-        if (_.isUndefined(indentWidth)) {
-			indentWidth = 5;
+	function format(input, indentWidth) {
+		if (_.isUndefined(indentWidth)) {
+			indentWidth = 0;
 		}
 
-		var xrayBuffer = '';
+		var inputBuffer = "";
 		var keys = [];
 
-	    if (_.isError(sourceObject)) {
+		function indent(indentLevel) {
+			var indentBuffer = "";
+			_.times(indentLevel, function(n) {indentBuffer += "\t";});
+			return indentBuffer;
+		} //end indent()
+
+		if (_.isError(input)) {
 			//Work-around for Firefox which doesn't
 			//  include name and message in stack.
-			if (sourceObject.stack.charAt(0) === '@') {
-				opt.title = addSpan(sourceObject.name + ': ' + sourceObject.message, 'error');
+			if (input.stack.charAt(0) === '@') {
+				title = "<span class=\"error\">" + input.name + ': ' + input.message + "</span>";
 			}
-		    return addSpan(encode(sourceObject.stack, indentWidth), ERROR);
+			return input.stack;
 		}
 
-		if (_.isNull(sourceObject)) {
-		    return addSpan(NULL);
+		if (_.isNull(input)) {
+			return "null";
 		}
 
-		if (_.isUndefined(sourceObject)) {
-		    return addSpan(UNDEFINED);
+		if (_.isUndefined(input)) {
+			return "undefined";
 		}
 
-		if (_.isString(sourceObject)) {
-		    return addSpan(STRING.OPEN_CHAR + encode(sourceObject, indentWidth) + STRING.CLOSE_CHAR, STRING);
+		if (_.isString(input)) {
+			return "\"" + input + "\"";
 		}
 
-		if (_.isNumber(sourceObject)) {
-		    return addSpan(sourceObject, NUMBER);
+		if (_.isNumber(input)) {
+			return input;
 		}
 
-		if (_.isBoolean(sourceObject)) {
-		    return addSpan(sourceObject, !!sourceObject);
+		if (_.isBoolean(input)) {
+			return input;
 		}
 
-		function colorize_function(func) {
-			var c = {
-				OPERAND:  'blue',
-				RESERVED: 'blue',
-				TEXT:     'red',
-				COMMENT:  'green',
-				LN: 'darkgray'
-			};
+		if (_.isFunction(input)) {
+			return input;
+		}
 
-			function span(string, color) {
-				return '<span style="color: ' + color + '">' + string + '</span>';
+		function addArrayElement(el) {
+			inputBuffer += indent(indentWidth) 
+				+ format(el, indentWidth);
+		}
+
+		function addArrayElementInitial(el) {
+			addArrayElement(el);
+			inputBuffer += ",\n";
+		}
+
+		if (_.isArray(input)) {
+			if (_.isEmpty(input)) {
+				return "[]";
 			}
-
-			var buffer = String(func)
-				.replace(/\</g, '&lt;')
-				.replace(/"[^"\\\r\n]*(?:\\.[^"\\\r\n]*)*"/g, function (x) {return span(x, c.TEXT);})
-				.replace(/'[^'\\\r\n]*(?:\\.[^'\\\r\n]*)*'/g, function (x) {return span(x, c.TEXT);})
-				.replace(/\b(function|return|if|var|else|this)\b/g, function (x) {return span(x, c.RESERVED);})
-				.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, function (x) {return span(x, c.COMMENT);});
-			
-			buffer = buffer.split('\n');
-			for (var i=0; i < buffer.length; i++) {
-				buffer[i] = span(('00' + (i + 1)).slice(-3), c.LN) + ' ' + (buffer[i]);
-			}
-			return '<br><pre>' + buffer.join('<br>') + '</pre>';
-		}
-
-		if (_.isFunction(sourceObject)) {
-			if (opt.colFun) {
-				return colorize_function(sourceObject);
-			}
-		    else {
-				return addSpan(encode(sourceObject.toString(), indentWidth), FUNCTION);
-			}
-		}
-
-		if (_.isObject(sourceObject) && !_.isNull(opt.sortBy)) {
-			sourceObject = _.sortBy(sourceObject, opt.sortBy);
-		}
-
-		function addArrayElement(arg) {
-		    xrayBuffer += addIndent(indentWidth) 
-				+ xray(arg, indentWidth);
-		}
-
-		function addArrayElementInitial(arg) {
-			addArrayElement(arg);
-			xrayBuffer += ',' + CR;
-		}
-
-		if (_.isArray(sourceObject)) {
-			if (_.isEmpty(sourceObject)) {
-				return addSpan(ARRAY.OPEN_CHAR + ARRAY.CLOSE_CHAR, ARRAY);
-			}
-			if (opt.sort) {
-				if (_.isNumber(sourceObject[0])) {
-					sourceObject.sort(function(a, b) {return a - b;});
+			if (option.isSorted) {
+				if (_.isNumber(input[0])) {
+					input.sort(function(a, b) {return a - b;});
 				}
 				else {
-					sourceObject.sort();
+					input.sort();
 				}
 			}
 			indentWidth++;
-		    xrayBuffer += ARRAY.OPEN_CHAR + CR;
-			_.each(_.initial(sourceObject), addArrayElementInitial);
-			addArrayElement(_(sourceObject).last());
-			xrayBuffer += CR + addIndent(--indentWidth) + ARRAY.CLOSE_CHAR;
-			return addSpan(xrayBuffer, ARRAY);
+			inputBuffer += "[\n";
+			_.each(_.initial(input), addArrayElementInitial);
+			addArrayElement(_(input).last());
+			inputBuffer += "\n" + indent(--indentWidth) + "]";
+			return inputBuffer;
 		}
 
-		function addObjectElement(arg) {
-			xrayBuffer += addIndent(indentWidth) 
-				+ STRING.OPEN_CHAR + arg + STRING.CLOSE_CHAR + ':' 
-				+ xray(sourceObject[arg], indentWidth);
+		function addObjectElement(el) {
+			inputBuffer += indent(indentWidth) 
+				+ "\"" + el + "\":" + format(input[el], indentWidth);
 		}
 
-		function addObjectElementInitial(arg) {
-			addObjectElement(arg);
-			xrayBuffer += ',' + CR;
+		function addObjectElementInitial(el) {
+			addObjectElement(el);
+			inputBuffer += ",\n";
 		}
 
-		if (_.isObject(sourceObject)) {
-			if (_.isEmpty(sourceObject)) {
-				return addSpan(OBJECT.OPEN_CHAR + OBJECT.CLOSE_CHAR, OBJECT);
+		if (_.isObject(input)) {
+			if (_.isEmpty(input)) {
+				return "{}";
 			}
-			keys = _(sourceObject).keys();
+			keys = _(input).keys();
 			indentWidth++;
-		    xrayBuffer += OBJECT.OPEN_CHAR + CR;
+			inputBuffer += "{\n";;
 			_.each(_.initial(keys), addObjectElementInitial);
 			addObjectElement(_.last(keys));
-			xrayBuffer += CR + addIndent(--indentWidth) + OBJECT.CLOSE_CHAR;
-			return addSpan(xrayBuffer, OBJECT);
+			inputBuffer += "\n" + indent(--indentWidth) + "}";
+			return inputBuffer;
 		}
-	} //end xray()
+	} //end format()
 
-	/* for unit testing */
-	//Based on idea borrowed from 
-	//  http://philipwalton.com/articles/how-to-unit-test-private-functions-in-javascript/
-	if (opt.test) {
-		var api = {__test__:{}};
-		api.__test__.ARRAY  = ARRAY;
-		api.__test__.OBJECT = OBJECT;
-		api.__test__.TAB    = TAB;
-		api.__test__.STRING = STRING;
-		api.__test__.addIndent = addIndent;
-		api.__test__.xray      = xray;
-		return api;
+	// Write log.
+	if (typeof moment === "undefined") {
+		var time = Date().toLocaleString();
 	}
-	/* end for unit testing */
+	else {
+		var time = moment().format("hh:mm:ss.SSS");
+	}
+	var caller = arguments.callee.caller;
+	caller = (!caller) ? "" : caller.name + "(): ";
+	if (_.isNull(title) || _.isUndefined(title)) {
+		title = "";
+	} 
+	else {
+		title = _.capitalize(title);
+	}
+		
+	if (option.isFormatted) {
+		var message = "<pre class=\"brush: js;\">" + format(input) + "</pre>";
+	}
+	else {
+		var message = (input).toString();
+	}
 
+	$("<p>")
+		.html("[" + time + "] " + caller + "<span class=\"title\">" + title + "</span>\n" + message )
+		.appendTo("#qlog");
+		
+	return title + "\n" + message;
 } //end qlog()

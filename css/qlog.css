@@ -1,0 +1,46 @@
+
+#qlogContainer {
+  font-family: 'Lucida Console', 'Courier', 'Courier New', 'monospace';
+  background: #efefef;
+  border: 1px solid silver;
+  padding: 5px;
+  top: 0px;
+  position: absolute;
+  right: 0px;
+  width: 80%;
+  @media screen and (max-width: 480px){font-size: 0.5em;};
+  @media screen and (max-width: 960px){font-size: 1.0em;};
+}
+#qlogContainer .button {
+  background-color: #ededef; 
+  border: thin #ddd solid; 
+  border-radius: 5px;
+}
+#qlog {
+  background: #dedede;
+  border: 1px solid Silver;
+  borderRadius: 5px;
+  padding: 5px;
+}
+#qlog .error {
+  color: red;
+}
+#qlog .false {
+  color: red;
+}
+#qlog .title {
+  font-weight: bold; 
+  font-size: 1.1em; 
+  font-family: 'san serif';
+}
+#qlog .true {
+  color: green;
+}
+
+.syntaxhighlighter .line.alt1 {
+  background-color: #dfdfdf !important;
+}
+
+.syntaxhighlighter .line.alt2 {
+  background-color: #e6e6e6 !important;
+}

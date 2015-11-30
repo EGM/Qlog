@@ -1,13 +1,18 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
 	<meta charset="UTF-8" />
 	<title>qlog - A Quick Logger for JavaScript</title>
-    <link href="css/styles.css" rel="stylesheet">
+	<link href="/css/shCoreDefault.css" rel="stylesheet" />
+	<link href="/css/qlog.css" rel="stylesheet" />
+	<link href="/css/styles.css" rel="stylesheet" />
 	<script src="/js/jquery-2.1.4.min.js"></script>
 	<script src="/js/underscore-min.js"></script>
 	<script src="/js/moment.js"></script>
+	<script src="/js/shCore.js"></script>
+	<script src="/js/shBrushJScript.js"></script>
 	<script src="/js/qlog.js"></script>
+	<script>SyntaxHighlighter.all();</script>
   </head>
   <body>
 
@@ -15,13 +20,40 @@
 
     <p>This is my first website</p>
 
-<script>
-var e = function snappy_function(x, y) {
+	<pre class="brush: js;"><span style="color:red;">
+	var e = function snappy_function(x, y) {
 	this.name = 'snappy';
 	return x + y;
-};
+	};
+	  </span></pre>
+	
+	<pre><div style="color:red;background-color:#e6e6e6;">ERROR</div></pre>
+	
+	
 
-qlog(qlog, {title: 'qlog', colFun: true});
+<script>
+  try{
+    qlog((Error()).toString());
+  } catch (e) {alert(e.stack);}
+  qlog([100,2,3], "three number array", {isSorted:true});
+  qlog(5>3, "a 5 is greater than a 3");
+  
+  qlog({"one":1, two:2});
+  qlog({one:"one", two:"two"});
+  
+  qlog(function cheese() {alert("cheese");});
+  qlog(null);
+  qlog(undefined);
+  qlog("undefined");
+  qlog(undefined === "undefined");
+  qlog(undefined !== "undefined");
+  function test() {
+    qlog("test");
+  }
+  test();
+  qlog(test);
+  qlog(Error('new error!'));
+  qlog(qlog);
 </script>
 
   </body>
