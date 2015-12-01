@@ -32,19 +32,59 @@ _.mixin({
  * 	see “Default options” below.
  */
 function qlog(input, title, options) {
-	
+
 	// default options
 	var option = {
 		isFormatted: true, 	//TRUE to "unwrap" objects etc
 		isSorted: false 	//TRUE to sort arrays using array[0] to select sorting type
 	};
 	_.extend(option, options);
-	
+
 	// init if first time use.
 	if (!$('#qlog').exists()) {
 		var fullSize = $(window).width() * 0.8;
 		var compactSize = fullSize * 0.3;
 		var compactLog = false;
+
+		$("<style>")
+			.prop("type", "text/css")
+			//Span styles:
+			.html("\
+			#qlogContainer {\
+  				font-family: 'Lucida Console', 'Courier', 'Courier New', 'monospace' !important;\
+  				font-weight: normal !important;\
+  				font-style: normal !important;\
+  				font-size: 1em !important;\
+  				background-color: #efefef !important;\
+  				border: 1px solid silver !important;\
+  				padding: 5px !important;\
+  				position: absolute !important;\
+  				top: 0px !important;\
+  				right: 0px !important;\
+  				width: 80% !important;\
+  				height: auto !important;\
+  				@media screen and (max-width: 480px){font-size: 0.5em !important;} !important;\
+  				@media screen and (max-width: 960px){font-size: 1.0em !important;} !important;\
+			}\
+			#qlogContainer .button {\
+  				background-color: #ededef !important;\
+  				border: thin #ddd solid !important;\
+  				border-radius: 5px !important;\
+			}\
+			#qlog {\
+  				background: #dedede !important;\
+  				border: 1px solid Silver !important;\
+  				borderRadius: 5px !important;\
+  				padding: 5px !important;\
+			}\
+			#qlog .title {\
+  				font-weight: bold !important;\
+  				font-size: 1.1em !important;\
+  				font-family: 'san serif' !important;\
+			}\
+		}")
+			.appendTo("head");
+
 		$("<div>")
 			.prop("id", "qlogContainer")
 			.click(function() { 
@@ -181,25 +221,26 @@ function qlog(input, title, options) {
 	else {
 		title = _.capitalize(title);
 	}
-		
+
 	if (option.isFormatted) {
 		var message = "<pre class=\"brush: js;\">" + format(input) + "</pre>";
 	}
 	else if (_.isBoolean(input)) {
-		var message = "<pre class =\""+!!input+"\">" + input + "<\pre>";
+		var message = "<pre class =\"line " + !!input + "\">" + input + "<\pre>";
 	}
 	else if (_.isError(input)) {
-		var message = "<pre class =\"error\">" + input.stack + "<\pre>";
+		var message = "<pre class =\"line error\">" + input.stack + "<\pre>";
 	}
-	else if (_.isNull(input)||_.isUndefined(input)) {
-		var message = "<pre class =\"null\">" + input;
-	} else {
-		var message = "<pre class=\""+(typeof input)+"\">" + (input).toString() + "<\pre>";
+	else if (_.isNull(input) || _.isUndefined(input)) {
+		var message = "<pre class =\"line null\">" + input;
+	}
+	else {
+		var message = "<pre class=\"line " + (typeof input) + "\">" + (input).toString() + "<\pre>";
 	}
 
 	$("<p>")
-		.html("[" + time + "] " + caller + "<span class=\"title\">" + title + "</span>\n" + message )
+		.html("[" + time + "] " + caller + "<span class=\"title\">" + title + "</span>\n" + message)
 		.appendTo("#qlog");
-		
+
 	return title + "\n" + message;
 } //end qlog()
