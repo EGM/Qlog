@@ -22,11 +22,25 @@
   borderRadius: 5px;
   padding: 5px;
 }
-#qlog .error {
-  color: red;
+#qlog .array, .object {
+  color: DarkBlue;
+  background-color:#e6e6e6;
 }
-#qlog .false {
-  color: red;
+#qlog .error, .false {
+  color: Red;
+  background-color:#e6e6e6;
+}
+#qlog .function {
+  color: Blue;
+  background-color:#e6e6e6;
+}
+#qlog .number, .string {
+  color: Black;
+  background-color:#e6e6e6;
+}
+#qlog .null {
+  color: DarkRed;
+  background-color:#e6e6e6;
 }
 #qlog .title {
   font-weight: bold; 
@@ -34,7 +48,8 @@
   font-family: 'san serif';
 }
 #qlog .true {
-  color: green;
+  color: Green;
+  background-color:#e6e6e6;
 }
 
 .syntaxhighlighter .line.alt1 {

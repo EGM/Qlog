@@ -33,6 +33,18 @@
 
 <script>
   try{
+  qlog(true, null, {isFormatted: false});
+  qlog(false, null, {isFormatted: false});
+  qlog(Error(), null, {isFormatted: false});
+  qlog(1, null, {isFormatted: false});
+  qlog("a", null, {isFormatted: false});
+  qlog([1,2,3], null, {isFormatted: false});
+  qlog({one:"one", two:"two"}, null, {isFormatted: false});
+  qlog(null, null, {isFormatted: false});
+  qlog(function(){}, null, {isFormatted: false});
+  qlog(undefined, null, {isFormatted: false});
+  
+  
     qlog((Error()).toString());
   } catch (e) {alert(e.stack);}
   qlog([100,2,3], "three number array", {isSorted:true});

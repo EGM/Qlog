@@ -185,8 +185,16 @@ function qlog(input, title, options) {
 	if (option.isFormatted) {
 		var message = "<pre class=\"brush: js;\">" + format(input) + "</pre>";
 	}
-	else {
-		var message = (input).toString();
+	else if (_.isBoolean(input)) {
+		var message = "<pre class =\""+!!input+"\">" + input + "<\pre>";
+	}
+	else if (_.isError(input)) {
+		var message = "<pre class =\"error\">" + input.stack + "<\pre>";
+	}
+	else if (_.isNull(input)||_.isUndefined(input)) {
+		var message = "<pre class =\"null\">" + input;
+	} else {
+		var message = "<pre class=\""+(typeof input)+"\">" + (input).toString() + "<\pre>";
 	}
 
 	$("<p>")
