@@ -36,7 +36,8 @@ function qlog(input, title, options) {
 	// default options
 	var option = {
 		isFormatted: true, 	//TRUE to "unwrap" objects etc
-		isSorted: false 	//TRUE to sort arrays using array[0] to select sorting type
+		isSorted: false, 	//TRUE to sort arrays using array[0] to select sorting type
+		sortBy: null 		//Non null to sort objects - still in beta
 	};
 	_.extend(option, options);
 
@@ -61,7 +62,7 @@ function qlog(input, title, options) {
   				position: absolute !important;\
   				top: 0px !important;\
   				right: 0px !important;\
-  				width: 80% !important;\
+  				width: 80%;\
   				height: auto !important;\
   				@media screen and (max-width: 480px){font-size: 0.5em !important;} !important;\
   				@media screen and (max-width: 960px){font-size: 1.0em !important;} !important;\
@@ -90,12 +91,12 @@ function qlog(input, title, options) {
 			.click(function() { 
 					   $("#qlog").slideToggle("slow"); 
 					   $("#qlogHdr").html("<span class=\"button\">" + (compactLog ?"[&minus;]": "[&plus;]") + "</span> qlog:");
-					   $(this).animate({width:compactLog ?fullSize: compactSize}, "slow");
+					   $(this).animate({width:(compactLog ?fullSize: compactSize)}, "slow");
 					   compactLog = !compactLog;
 				   })
 			.appendTo("body");
 
-		$('<h2>')
+		$("<h2>")
 			.prop("id", "qlogHdr")
 			.html("<span class=\"button\">[&minus;]</span> qlog:")
 			.appendTo("#qlogContainer");
@@ -105,6 +106,12 @@ function qlog(input, title, options) {
 			.appendTo("#qlogContainer");
 	}
 
+	function indent(indentLevel) {
+		var indentBuffer = "";
+		_.times(indentLevel, function(n) {indentBuffer += "\t";});
+		return indentBuffer;
+	} //end indent()
+
 	function format(input, indentWidth) {
 		if (_.isUndefined(indentWidth)) {
 			indentWidth = 0;
@@ -112,12 +119,6 @@ function qlog(input, title, options) {
 
 		var inputBuffer = "";
 		var keys = [];
-
-		function indent(indentLevel) {
-			var indentBuffer = "";
-			_.times(indentLevel, function(n) {indentBuffer += "\t";});
-			return indentBuffer;
-		} //end indent()
 
 		if (_.isError(input)) {
 			//Work-around for Firefox which doesn't
@@ -150,6 +151,10 @@ function qlog(input, title, options) {
 
 		if (_.isFunction(input)) {
 			return input;
+		}
+		
+		if (_.isObject(input) && !_.isNull(option.sortBy)) {
+			input = _.sortBy(input, option.sortBy);
 		}
 
 		function addArrayElement(el) {
@@ -205,6 +210,18 @@ function qlog(input, title, options) {
 			return inputBuffer;
 		}
 	} //end format()
+
+	/* for unit testing */
+	//Based on idea borrowed from 
+	//  http://philipwalton.com/articles/how-to-unit-test-private-functions-in-javascript/
+	//  cicumvents logging
+	if (option.test) {
+		var api = {__test__:{}};
+		api.__test__.indent = indent;
+		api.__test__.format = format;
+		return api;
+	}
+	/* end for unit testing */
 
 	// Write log.
 	if (typeof moment === "undefined") {
