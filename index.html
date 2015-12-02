@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
 	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>qlog - A Quick Logger for JavaScript</title>
 	<link href="/css/shCoreDefault.css" rel="stylesheet" />
 	<link href="/css/qlog.css" rel="stylesheet" />
@@ -16,62 +17,91 @@
   </head>
   <body>
 
-    <h1>My Website</h1>
+    <h1>[+] qlog</h1>
+	<h2>Quick Logger for JavaScript</h2>
 
-    <p>This is my first website</p>
+	<h3>Strings</h3>
+	<div class="example">
+	  <p>qlog( "Strings" );</p>
+	  <pre class="brush: js;">"Strings"</pre>
+	</div>
 
-	<pre class="brush: js;"><span style="color:red;">
-	var e = function snappy_function(x, y) {
-	this.name = 'snappy';
-	return x + y;
-	};
-	  </span></pre>
+	<h3>Numbers</h3>
+	<div class="example">
+	  <p>qlog( 123 );</p>
+	  <pre class="brush: js;">123</pre>
+	</div>
 	
-	<pre><div style="color:red;background-color:#e6e6e6;">ERROR</div></pre>
+	<h3>Objects</h3>
+	<div class="example">
+	  <p>qlog( { } );</p>
+	  <pre class="brush: js;">{ }</pre>
+	  <p>qlog( {name:"John"} );</p>
+	  <pre class="brush: js;">
+		{
+		"name":"John"
+		}</pre>
+	</div>
+	  
+	<h3>Arrays</h3>
+	<div class="example">
+	  <p>qlog( [ ] );</p>
+	  <pre class="brush: js;">[ ]</pre>
+	  <p>qlog( [1,3,2] );</p>
+	  <pre class="brush: js;">
+		[
+		  1,
+		  3,
+		  2
+		]</pre>
+	  <p>qlog( ["piano", "lounge chair"] );</p>
+	  <pre class="brush: js;">
+		[
+		  "piano",
+		  "lounge chair"
+		]</pre>
+	  <p>qlog( [{name: "John"}, {name: "Sue"}] );</p>
+	  <pre class="brush: js;">
+		[
+		  {
+		    "name":"John"
+		  },
+		  {
+		    "name":"Sue"
+		  }
+		]</pre>
+	</div>
+
+	<h3>Null</h3>
+	<div class="example">
+	  <p>qlog( null );</p>
+	  <pre class="brush: js;">null</pre>
+	</div>
+
+	<h3>Undefined</h3>
+	<div class="example">
+	  <p>var undefined_var;</p>
+	  <p>qlog( undefined_var );</p>
+	  <pre class="brush: js;">undefined</pre>
+	</div>
 	
+	<h3>Function</h3>
+	<div class="example">
+	  <p>function hello() {<br />
+		 &nbsp;&nbsp; return "hello world";<br />
+		  }
+	  </p>
+	  <pre class="brush: js;">
+		function hello() {
+		  return "hello world";
+		}</pre>
+	</div>
+	
+	
+ 
+	  
 	
 
-<script>
-  try{
-//  qlog(JSON.stringify([1,2,3]));
-//  qlog(true, null, {isFormatted: false});
-//  qlog(false, null, {isFormatted: false});
-//  qlog(Error(), null, {isFormatted: false});
-//  qlog(1, null, {isFormatted: false});
-//  qlog("a", null, {isFormatted: false});
-//  qlog([1,2,3], null, {isFormatted: false});
-//  qlog({one:"one", two:"two"}, null, {isFormatted: false});
-//  qlog(null, null, {isFormatted: false});
-//  qlog(function(){}, null, {isFormatted: false});
-//  qlog(undefined, null, {isFormatted: false});
-//  
-  
-    qlog((Error()).toString());
-  } catch (e) {alert(e.stack);}
-  qlog([{name: 'moe', age: 50}, {name: 'larry', age: 60}, {name: 'curly', age: 40}],null,{sortBy:"name"});
-  qlog([{name: 'moe', age: 50}, {name: 'larry', age: 60}, {name: 'curly', age: 40}]);
-  
-  
-  qlog([100,2,3], "three number array", {isSorted:true});
-  qlog(5>3, "a 5 is greater than a 3");
-  
-  qlog({"one":1, two:2});
-  qlog({one:"one", two:"two"});
-  
-  qlog(function cheese() {alert("cheese");});
-  qlog(null);
-  qlog(undefined);
-  qlog("undefined");
-  qlog(undefined === "undefined");
-  qlog(undefined !== "undefined");
-  function test() {
-    qlog("test");
-  }
-  test();
-  qlog(test);
-  qlog(Error('new error!'));
-  qlog(qlog);
-</script>
 
   </body>
 </html>		

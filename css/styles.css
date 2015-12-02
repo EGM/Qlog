@@ -1,1 +1,18 @@
 
+body {
+  padding: 1em;
+  background-color:#dedede;
+}
+.example {
+  width: auto;
+  margin: 1em;;
+  padding: 1em;
+  background-color: #d3d3d3;
+  border: thin solid Silver;
+  border-radius: 5px;
+}
+.line {
+  width: 80%;
+  margin-left: 20px;
+  background-color: #e6e6e6
+}

@@ -16,8 +16,14 @@ jQuery.fn.exists = function() {
  * underscore additional functions.
  */
 _.mixin({ 
+
+			/*
+			 ^\w+\b(?<!\b(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet))\b(?!(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet)\b)
+			 */
+			//Capitalize each word in string
 			capitalize: function(string) { 
-				return string.replace(/\b\S+\b/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();}); 
+				return string.replace(/\b(?!(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet)\b)\w+/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();})
+					.replace(/^[a-z]+/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();});
 			},
 			isError: function(object) {
 				return object instanceof Error;
@@ -152,7 +158,7 @@ function qlog(input, title, options) {
 		if (_.isFunction(input)) {
 			return input;
 		}
-		
+
 		if (_.isObject(input) && !_.isNull(option.sortBy)) {
 			input = _.sortBy(input, option.sortBy);
 		}
