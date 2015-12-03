@@ -16,13 +16,10 @@ jQuery.fn.exists = function() {
  * underscore additional functions.
  */
 _.mixin({ 
-
-			/*
-			 ^\w+\b(?<!\b(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet))\b(?!(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet)\b)
-			 */
-			//Capitalize each word in string
+			//Capitalize each word in string using AP title rules
 			capitalize: function(string) { 
-				return string.replace(/\b(?!(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet)\b)\w+/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();})
+				return string.replace(/\b(?!(?:a|an|and|at|but|by|for|in|nor|of|on|or|so|the|to|up|yet)\b)\w+/g, 
+					function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();})
 					.replace(/^[a-z]+/g, function(string) {return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();});
 			},
 			isError: function(object) {
@@ -50,7 +47,7 @@ function qlog(input, title, options) {
 	// init if first time use.
 	if (!$('#qlog').exists()) {
 		var fullSize = $(window).width() * 0.8;
-		var compactSize = fullSize * 0.3;
+		var compactSize = fullSize * 0.4;
 		var compactLog = false;
 
 		$("<style>")

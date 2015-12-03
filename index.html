@@ -20,47 +20,68 @@
     <h1>[+] qlog</h1>
 	<h2>Quick Logger for JavaScript</h2>
 
-	<h3>Strings</h3>
+	<p>qlog( input, title, {options} );</p>
+	
+	<h3>Basic Usage</h3>
+	<h4>Strings</h4>
 	<div class="example">
-	  <p>qlog( "Strings" );</p>
+	  <code>qlog( "Strings" ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">"Strings"</pre>
 	</div>
 
-	<h3>Numbers</h3>
+	<h4>Numbers</h4>
 	<div class="example">
-	  <p>qlog( 123 );</p>
+	  <code>qlog( 123 ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">123</pre>
 	</div>
 	
-	<h3>Objects</h3>
+	<h4>Booleans</h4>
 	<div class="example">
-	  <p>qlog( { } );</p>
+	  <code>qlog( 3 > 1 ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
+	  <pre class="brush: js;">true</pre>
+	  <code>qlog( 0 > 1 ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
+	  <pre class="brush: js;">false</pre>
+	</div>
+	
+	<h4>Objects</h4>
+	<div class="example">
+	  <code>qlog( { } ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">{ }</pre>
-	  <p>qlog( {name:"John"} );</p>
+	  <code>qlog( {name:"John"} ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">
 		{
-		"name":"John"
+		  "name":"John"
 		}</pre>
 	</div>
 	  
-	<h3>Arrays</h3>
+	<h4>Arrays</h4>
 	<div class="example">
-	  <p>qlog( [ ] );</p>
+	  <code>qlog( [ ] ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">[ ]</pre>
-	  <p>qlog( [1,3,2] );</p>
+	  <code>qlog( [1,3,2] ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">
 		[
 		  1,
 		  3,
 		  2
 		]</pre>
-	  <p>qlog( ["piano", "lounge chair"] );</p>
+	  <code>qlog( ["piano", "lounge chair"] ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">
 		[
 		  "piano",
 		  "lounge chair"
 		]</pre>
-	  <p>qlog( [{name: "John"}, {name: "Sue"}] );</p>
+	  <code>qlog( [{name: "John"}, {name: "Sue"}] ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">
 		[
 		  {
@@ -72,36 +93,111 @@
 		]</pre>
 	</div>
 
-	<h3>Null</h3>
+	<h4>Null</h4>
 	<div class="example">
-	  <p>qlog( null );</p>
+	  <code>qlog( null ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">null</pre>
 	</div>
 
-	<h3>Undefined</h3>
+	<h4>Undefined</h4>
 	<div class="example">
-	  <p>var undefined_var;</p>
-	  <p>qlog( undefined_var );</p>
+	  <code>var undefined_var;</code><br/>
+	  <code>qlog( undefined_var ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">undefined</pre>
 	</div>
 	
-	<h3>Function</h3>
+	<h4>Function</h4>
 	<div class="example">
-	  <p>function hello() {<br />
+	  <code>function hello() {<br />
 		 &nbsp;&nbsp; return "hello world";<br />
 		  }
-	  </p>
+	  =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>]</p>
 	  <pre class="brush: js;">
 		function hello() {
 		  return "hello world";
 		}</pre>
 	</div>
 	
+	<h3>Titles</h3>
+	<p>Qlog uses <em>AP style</em> in capitalizing titles.</p>
 	
- 
+	<h4>Strings &amp; Titles</h4>
+	<div class="example">
+	  <code>qlog( "Strings", "a string is a thing" ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">A String Is a Thing</span></p>
+	  <pre class="brush: js;">"Strings"</pre>
+	</div>
+	
+	<h4>Booleans Revisited</h4>
+	<div class="example">
+	  <code>qlog( 3 > 7, "3 > 7" ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">3 > 7</span></p>
+	  <pre class="brush: js;">false</pre>
+	  <code>qlog( isGood(this), "is this good?" ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">Is This Good?</span></p>
+	  <pre class="brush: js;">true</pre>
+	</div>
+	
+	<h3>Options</h3>
+	<p>Not that you'd ever need it... but
+	  there if you do.</p>
+	
+	<h4>Sorting {isSorted: true}</h4>
+	<div class="example">
+	  <p>Sorts arrays in input, default is <em>false</em>. 
+	  Uses the first element in the array to determine
+	  sort process, so mixed arrays will be unpredictable.</p>
+	  <code>qlog( [1,3,2], "sorted", {isSorted: true} ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">Sorted</span></p>
+	  <pre class="brush: js;">
+		[
+		  1,
+		  2,
+		  3
+		]</pre>
+	  <code>qlog( ["piano", "lounge chair"], "sorted", {isSorted: true} ); =></code>
+	  <p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">Sorted</span></p>
+	  <pre class="brush: js;">
+		[
+		  "lounge chair",
+		  "piano"
+		]</pre>
+	</div>
+	
+	<h4>Formatting {isFormatted: false}</h4>
+	<div class="example">
+	  <p>Use fancy formatting / syntax highlighting, default is <em>true</em>.</p>
+	  <code>qlog( 3 > 7, "3 > 7", {isFormatted: false} ); =></code>
+		<p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">3 > 7</span></p>
+		<pre class="line false">false</pre>
+		<code>qlog( isGood(this), "is this good?", {isFormatted: false} ); =></code>
+		<p>[<script>document.write(moment().format("hh:mm:ss.SSS"));</script>] <span class="title">Is This Good?</span></p>
+		<pre class="line true">true</pre>
+	</div>
+	
+	<h2>About</h2>
+	<p>Qlog was created because I was frustrated 
+	  by a lack of easy access to the console 
+	  log<sup>1</sup> while playing with different 
+	  JavaScript code on my cell phone.<sup>2</sup></p>
 	  
+	<p class="footnote">1. Not completely true, FireFox for Android 
+	  has an add-on console that works quite well.</p>
+	<p class="footnote">2. I also wanted to play around with both jQuery
+	  and Underscore. They rock!</p>
 	
-
-
+	<h2>Libraries Used</h2>
+	<p>jQuery (c) 2005, 2015 jQuery Foundation, Inc. | jquery.org/license</p>
+	<p>Underscore.js (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc. | MIT license</p>
+	<p>moment.js (c) Tim Wood, Iskren Chernev, Moment.js contributors | MIT license</p>
+	<p>SyntaxHighlighter (c) 2004-2010 Alex Gorbatchev | MIT GPL dual license</p>
+	  
+	<h2>Inspirations and Mentions</h2>
+	<p><a href="http://www.quickanddirtytips.com/education/grammar/capitalizing-titles?page=all">
+		Grammar Girl: Capitalizing Titles</a> - tips on A.P. styling of titles.</p>
+		  
   </body>
 </html>		
